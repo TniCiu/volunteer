@@ -170,7 +170,7 @@ const CustomAppBar = ({
                   },
                 }}
               >
-                {isMobile ? "Login" : "Đăng nhập"}
+                {isMobile ? "Đăng nhập" : "Đăng nhập"}
               </Button>
             )}
           </Box>
