@@ -23,9 +23,11 @@ const START_SERVER = () => {
   const server = http.createServer(app)
   initSocket(server)
 
-  server.listen(env.APP_PORT, env.APP_HOST,() => {
-    console.log(`3. Server running at http://${env.APP_HOST}:${env.APP_PORT}`)
-  });
+  const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
   exitHook(() => {
     console.log('4. Disconnecting from Database with Mysql...')
