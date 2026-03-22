@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Server about mart",
   "engines": {
-    "node": "22.17.1"
+    "node": "22.22.0"
   },
   "scripts": {
     "lint": "eslint src --ext js --report-unused-disable-directives --max-warnings 0",
