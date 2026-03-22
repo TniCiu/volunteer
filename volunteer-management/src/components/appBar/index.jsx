@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -9,13 +9,19 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from '../../components/appBar/auth/AuthContext';
+import { useAuth } from "../../components/appBar/auth/AuthContext";
 import Profiles from "./menus/profile";
+
 const PRIMARY_BLUE = "#1a237e";
-const PRIMARY_YELLOW = "#ffd700 ";
+const PRIMARY_YELLOW = "#ffd700";
 
 const CustomAppBar = ({
   title = "Tình Nguyện Viên",
@@ -25,133 +31,176 @@ const CustomAppBar = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
- const { isAuthenticated } = useAuth();
-  return (
-    <AppBar
-      position="sticky"
-      sx={{
-        background: PRIMARY_BLUE,
-        boxShadow: 2,
-        px: { xs: 2, md: 6 },
-        py: 1,
-      }}
-    >
-      <Toolbar sx={{ justifyContent: "space-between", minHeight: 120 }}>
-        {/* Nút logo + tên tổ chức */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Button
-            onClick={() => navigate("/")}
-            sx={{
-              textAlign: "left",
-              color: "#fff",
-              p: 0,
-              textTransform: "none",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              "&:hover": {
-                backgroundColor: "transparent",
-                opacity: 0.9,
-              },
-            }}
-          >
-            <Typography
-              variant={isMobile ? "h6" : "h5"}
-              sx={{
-                fontWeight: "bold",
-                lineHeight: 1.2,
-                letterSpacing: 1,
-                color: "#fff",
-              }}
-            >
-              {title}
-            </Typography>
-            {!isMobile && (
-              <Typography
-                variant="body2"
-                sx={{ lineHeight: 1.2, color: "#e3f0ff", fontSize: 14 }}
-              >
-                {slogan}
-              </Typography>
-            )}
-          </Button>
-        </Box>
+  const { isAuthenticated } = useAuth();
 
-        {/* Thanh chức năng bên phải */}
-        <Box
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const menuItems = [
+    { label: "Trang chủ", path: "/" },
+    { label: "Hoạt động", path: "/hoat-dong" },
+  ];
+
+  return (
+    <>
+      {/* APP BAR */}
+      <AppBar
+        position="sticky"
+        sx={{
+          background: PRIMARY_BLUE,
+          px: { xs: 2, md: 6 },
+          py: 1,
+        }}
+      >
+        <Toolbar
           sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: { xs: 1, md: 3 },
-            ml: 2,
+            justifyContent: "space-between",
+            minHeight: { xs: 70, md: 100 },
           }}
         >
-          {!isMobile && (
-            <>
-              <Button href="/" color="inherit" sx={{ fontWeight: 500 }}>
-                Trang chủ
-              </Button>
-              <Button
+          {/* LEFT */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {isMobile && (
+              <IconButton
                 color="inherit"
-                sx={{ fontWeight: 500 }}
-                onClick={onActivityClick || (() => navigate("/hoat-dong"))}
+                onClick={() => setOpenDrawer(true)}
               >
-                Hoạt động
-              </Button>
-            </>
-          )}
+                <MenuIcon />
+              </IconButton>
+            )}
 
-          {/* Thanh tìm kiếm */}
+            <Box
+              onClick={() => navigate("/")}
+              sx={{ cursor: "pointer" }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "bold",
+                  color: "#fff",
+                  fontSize: isMobile ? 16 : 20,
+                }}
+              >
+                {title}
+              </Typography>
+
+              {!isMobile && (
+                <Typography
+                  sx={{ color: "#e3f0ff", fontSize: 13 }}
+                >
+                  {slogan}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+
+          {/* RIGHT */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              background: "#fff",
-              borderRadius: 2,
-              px: 1,
-              mr: { xs: 0, md: 2 },
-              minWidth: isMobile ? 90 : 160,
+              gap: 1,
             }}
           >
-            <InputBase
-              placeholder="Tìm kiếm"
+            {/* MENU DESKTOP */}
+            {!isMobile && (
+              <>
+                <Button
+                  color="inherit"
+                  onClick={() => navigate("/")}
+                >
+                  Trang chủ
+                </Button>
+                <Button
+                  color="inherit"
+                  onClick={
+                    onActivityClick ||
+                    (() => navigate("/hoat-dong"))
+                  }
+                >
+                  Hoạt động
+                </Button>
+              </>
+            )}
+
+            {/* SEARCH */}
+            <Box
               sx={{
-                ml: 1,
-                flex: 1,
-                color: PRIMARY_BLUE,
-                fontSize: 15,
+                display: "flex",
+                alignItems: "center",
+                background: "#fff",
+                borderRadius: 20,
+                px: 1,
+                width: isMobile ? "100px" : "200px",
+                transition: "0.3s",
+                "&:focus-within": {
+                  width: isMobile ? "140px" : "260px",
+                },
               }}
-              inputProps={{ "aria-label": "search" }}
-            />
-            <IconButton size="small" sx={{ color: PRIMARY_BLUE }}>
-              <SearchIcon />
-            </IconButton>
+            >
+              <InputBase
+                placeholder="Tìm..."
+                sx={{
+                  ml: 1,
+                  flex: 1,
+                  fontSize: isMobile ? 13 : 15,
+                }}
+              />
+              <SearchIcon
+                sx={{ color: PRIMARY_BLUE }}
+                fontSize="small"
+              />
+            </Box>
+
+            {/* AUTH */}
+            {isAuthenticated ? (
+              <Profiles />
+            ) : (
+              <Button
+                variant="contained"
+                onClick={() => navigate("/dang-nhap")}
+                sx={{
+                  background: PRIMARY_YELLOW,
+                  color: PRIMARY_BLUE,
+                  borderRadius: 20,
+                  px: isMobile ? 1.5 : 3,
+                  py: isMobile ? 0.5 : 1,
+                  fontSize: isMobile ? 12 : 14,
+                  fontWeight: "bold",
+                  "&:hover": {
+                    background: "#fff27a",
+                  },
+                }}
+              >
+                {isMobile ? "Login" : "Đăng nhập"}
+              </Button>
+            )}
           </Box>
- {isAuthenticated ? (
-            <Profiles />
-          ) : (
-           <Button
-            variant="contained"
-            sx={{
-              background: PRIMARY_YELLOW,
-              color: PRIMARY_BLUE,
-              fontWeight: "bold",
-              borderRadius: 5,
-              px: 3,
-              py: 1,
-              fontSize: 15,
-              boxShadow: 1,
-              "&:hover": { background: "#fff27a" },
-              ml: { xs: 0, md: 1 },
-            }}
-            onClick={() => navigate("/dang-nhap")}
-          >
-            Đăng nhập
-          </Button>
-          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* DRAWER MOBILE */}
+      <Drawer
+        anchor="left"
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+      >
+        <Box sx={{ width: 250 }}>
+          <List>
+            {menuItems.map((item, index) => (
+              <ListItem
+                button
+                key={index}
+                onClick={() => {
+                  navigate(item.path);
+                  setOpenDrawer(false);
+                }}
+              >
+                <ListItemText primary={item.label} />
+              </ListItem>
+            ))}
+          </List>
         </Box>
-      </Toolbar>
-    </AppBar>
+      </Drawer>
+    </>
   );
 };
 
