@@ -29,8 +29,8 @@ export const SocketProvider = ({ children }) => {
       return;
     }
 
-    // Tạo kết nối socket - sử dụng port 5000 (backend default)
-    const socketInstance = io('http://localhost:5000', {
+    // Tạo kết nối socket 
+    const socketInstance = io('https://volunteer-a7pt.onrender.com', {
       auth: {
         userId: userId,
         role: userRole
